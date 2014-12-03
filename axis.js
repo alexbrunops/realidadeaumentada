@@ -16,12 +16,11 @@ var imageData,
 
 var modelSize 	= 90.0; //millimeters
 
-var rotMat 		= new Matrix4();
-var transMat 	= new Matrix4();
-var scaleMat 	= new Matrix4();
+var rotMat 		= [new Matrix4(), new Matrix4()];
+var transMat 	= [new Matrix4(), new Matrix4()];
+var scaleMat 	= [new Matrix4(), new Matrix4()];
 
 var rot			= 0.0;
-
 
 var yaw 		= 0.0,
 	pitch 		= 0.0,
@@ -438,9 +437,9 @@ var color 		= new Float32Array(3);
 	ProjMat.setPerspective(40.0, gl.viewportWidth / gl.viewportHeight, 0.1, 1000.0);
 	
 	modelMat.setIdentity();
-	modelMat.multiply(transMat);
-	modelMat.multiply(rotMat);
-	modelMat.multiply(scaleMat);
+	modelMat.multiply(transMat[0]);
+	modelMat.multiply(rotMat[0]);
+	modelMat.multiply(scaleMat[0]);
 	
 	MVPMat.setIdentity();
     MVPMat.multiply(ProjMat);
@@ -457,33 +456,91 @@ var color 		= new Float32Array(3);
 	        alert(err);
 	        console.error(err.description);
 	    }
-	   
-	   	color[0] = 1.0; color[1] = 1.0; color[2] = 0.0;
+        
+        if(markers[0] != null) {
+            modelMat.setIdentity();
+            modelMat.multiply(transMat[0]);
+            modelMat.multiply(rotMat[0]);
+            modelMat.multiply(scaleMat[0]);
 
-	    gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
-		gl.uniform3fv(shaderObject.uColor, color);	
-
-		for(var o = 0; o < model.length; o++) {
-			drawSphere(model[o], shaderObject);
-		}
-
-		color[0] = 0.0; color[1] = 0.0; color[2] = 1.0;
-		rot += 1.0;
-
-		modelMat.rotate(rot, 0.0, 0.0, 1.0);
-		modelMat.translate(1.0, 0.0, 0.0);
+            MVPMat.setIdentity();
+            MVPMat.multiply(ProjMat);
+            MVPMat.multiply(ViewMat);
+            MVPMat.multiply(modelMat);
+            
+            gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
 		
-		MVPMat.setIdentity();
-	    MVPMat.multiply(ProjMat);
-	    MVPMat.multiply(ViewMat);
-	    MVPMat.multiply(modelMat);
+            color[0] = 1.0; color[1] = 0.0; color[2] = 0.0;
+            gl.uniform3fv(shaderObject.uColor, color);	
 
-		gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
-		gl.uniform3fv(shaderObject.uColor, color);	
+            for(var o = 0; o < model.length; o++) {
+                drawSphere(model[o], shaderObject);
+            }
+            
+            color[0] = 0.0; color[1] = 1.0; color[2] = 1.0;
+            rot += 1.0;
 
-		for(var o = 0; o < model.length; o++) {
-			drawSphere(model[o], shaderObject);
-		}
+            modelMat.rotate(rot, 0.0, 0.0, 1.0);
+            modelMat.translate(1.0, 0.0, 0.0);
+
+            MVPMat.setIdentity();
+            MVPMat.multiply(ProjMat);
+            MVPMat.multiply(ViewMat);
+            MVPMat.multiply(modelMat);
+
+            gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
+            gl.uniform3fv(shaderObject.uColor, color);
+            
+            for(var o = 0; o < model.length; o++) {
+                drawSphere(model[o], shaderObject);
+            }
+        }
+
+        if(markers[1] != null) {
+            modelMat.setIdentity();
+            modelMat.multiply(transMat[1]);
+            modelMat.multiply(rotMat[1]);
+            modelMat.multiply(scaleMat[1]);
+
+            color[0] = 1.0; color[1] = 0.0; color[2] = 1.0;
+            rot += 1.0;
+
+            modelMat.rotate(rot, 0.0, 0.0, 1.0);
+            modelMat.translate(1.0, 0.0, 0.0);
+            
+            MVPMat.setIdentity();
+            MVPMat.multiply(ProjMat);
+            MVPMat.multiply(ViewMat);
+            MVPMat.multiply(modelMat);            
+            
+            gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
+		
+            color[0] = 0.0; color[1] = 0.0; color[2] = 1.0;
+            gl.uniform3fv(shaderObject.uColor, color);
+
+            for(var o = 0; o < model.length; o++) {
+                drawSphere(model[o], shaderObject);
+            }
+            
+            color[0] = 1.0; color[1] = 0.0; color[2] = 1.0;
+            rot += 1.0;
+
+            modelMat.rotate(rot, 0.0, 0.0, 1.0);
+            modelMat.translate(1.0, 0.0, 0.0);
+
+            MVPMat.setIdentity();
+            MVPMat.multiply(ProjMat);
+            MVPMat.multiply(ViewMat);
+            MVPMat.multiply(modelMat);
+
+            gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
+            gl.uniform3fv(shaderObject.uColor, color);
+            
+            for(var o = 0; o < model.length; o++) {
+                drawSphere(model[o], shaderObject);
+            }
+        }
+	    
 	}
 }
 
@@ -585,8 +642,8 @@ function webGLStart() {
 	detector 	= new AR.Detector();
 	posit 		= new POS.Posit(modelSize, canvas.width);
 
-	rotMat.setIdentity();
-	transMat.setIdentity();	
+	rotMat[0].setIdentity();
+	transMat[0].setIdentity();	
 
 	readOBJFile("../modelos/sphere.obj", gl, 1, true);
 	
@@ -641,7 +698,12 @@ function drawCorners(markers){
   for (i = 0; i < markers.length; ++ i){
 	corners = markers[i].corners;
 	
-	videoImageContext.strokeStyle = "red";
+      if(i == 0)
+        videoImageContext.strokeStyle = "red";
+      else
+        if(i == 1)
+          videoImageContext.strokeStyle = "blue";
+      
 	videoImageContext.beginPath();
 	
 	for (j = 0; j < corners.length; ++ j){
@@ -666,38 +728,40 @@ function updateScenes(markers) {
   
 	if (markers.length > 0) {
 		
-		corners = markers[0].corners;
-		
-		for (i = 0; i < corners.length; ++ i) {
-			corner = corners[i];
-			
-			corner.x = corner.x - (canvas.width / 2);
-			corner.y = (canvas.height / 2) - corner.y;
-		}
-		
-		pose = posit.pose(corners);
-		
-		yaw 	= Math.atan2(pose.bestRotation[0][2], pose.bestRotation[2][2]) * 180.0/Math.PI;
-		pitch 	= -Math.asin(-pose.bestRotation[1][2]) * 180.0/Math.PI;
-		roll 	= Math.atan2(pose.bestRotation[1][0], pose.bestRotation[1][1]) * 180.0/Math.PI;
-		
-		rotMat.setIdentity();
-		rotMat.rotate(yaw, 0.0, 1.0, 0.0);
-		rotMat.rotate(pitch, 1.0, 0.0, 0.0);
-		rotMat.rotate(roll, 0.0, 0.0, 1.0);
-		
-		transMat.setIdentity();
-		transMat.translate(pose.bestTranslation[0], pose.bestTranslation[1], -pose.bestTranslation[2]);
-		scaleMat.setIdentity();
-		scaleMat.scale(modelSize, modelSize, modelSize);
+        for(var j = 0; j < markers.length; j++) {
+            corners = markers[j].corners;
+
+            for (i = 0; i < corners.length; ++ i) {
+                corner = corners[i];
+
+                corner.x = corner.x - (canvas.width / 2);
+                corner.y = (canvas.height / 2) - corner.y;
+            }
+
+            pose = posit.pose(corners);
+
+            yaw 	= Math.atan2(pose.bestRotation[0][2], pose.bestRotation[2][2]) * 180.0/Math.PI;
+            pitch 	= -Math.asin(-pose.bestRotation[1][2]) * 180.0/Math.PI;
+            roll 	= Math.atan2(pose.bestRotation[1][0], pose.bestRotation[1][1]) * 180.0/Math.PI;
+
+            rotMat[j].setIdentity();
+            rotMat[j].rotate(yaw, 0.0, 1.0, 0.0);
+            rotMat[j].rotate(pitch, 1.0, 0.0, 0.0);
+            rotMat[j].rotate(roll, 0.0, 0.0, 1.0);
+
+            transMat[j].setIdentity();
+            transMat[j].translate(pose.bestTranslation[0], pose.bestTranslation[1], -pose.bestTranslation[2]);
+            scaleMat[j].setIdentity();
+            scaleMat[j].scale(modelSize, modelSize, modelSize);
+        }
 		
 		//console.log("pose.bestError = " + pose.bestError);
 		//console.log("pose.alternativeError = " + pose.alternativeError);
 	}
 	else {
-		transMat.setIdentity();
-		rotMat.setIdentity();
-		scaleMat.setIdentity();
+		transMat[0].setIdentity();
+		rotMat[0].setIdentity();
+		scaleMat[0].setIdentity();
 		yaw 	= 0.0;
 		pitch 	= 0.0;
 		roll 	= 0.0;
