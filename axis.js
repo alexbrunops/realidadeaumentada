@@ -20,6 +20,8 @@ var rotMat 		= new Matrix4();
 var transMat 	= new Matrix4();
 var scaleMat 	= new Matrix4();
 
+var rot			= 0.0;
+
 
 var yaw 		= 0.0,
 	pitch 		= 0.0,
@@ -456,9 +458,27 @@ var color 		= new Float32Array(3);
 	        console.error(err.description);
 	    }
 	   
+	   	color[0] = 1.0; color[1] = 1.0; color[2] = 0.0;
+
 	    gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
+		gl.uniform3fv(shaderObject.uColor, color);	
+
+		for(var o = 0; o < model.length; o++) {
+			drawSphere(model[o], shaderObject);
+		}
+
+		color[0] = 0.0; color[1] = 0.0; color[2] = 1.0;
+		rot += 1.0;
+
+		modelMat.rotate(rot, 0.0, 0.0, 1.0);
+		modelMat.translate(1.0, 0.0, 0.0);
 		
-		color[0] = 1.0; color[1] = 1.0; color[2] = 0.0;
+		MVPMat.setIdentity();
+	    MVPMat.multiply(ProjMat);
+	    MVPMat.multiply(ViewMat);
+	    MVPMat.multiply(modelMat);
+
+		gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
 		gl.uniform3fv(shaderObject.uColor, color);	
 
 		for(var o = 0; o < model.length; o++) {
@@ -589,6 +609,7 @@ function webGLStart() {
 // ********************************************************
 function animate() {
     requestAnimationFrame(animate);
+    //rot += 1.0;
 	render();		
 }
 
@@ -603,7 +624,7 @@ function render() {
 		
         var markers = detector.detect(imageData);
  		
- 		//Desenha a margem vermelha e o ponto verde
+ 		//Desenha o contorno vermelho e o ponto verde
         drawCorners(markers);
 	
         drawScene(markers);
