@@ -69,6 +69,7 @@
 	uniform mat4 uModelMat;
 	uniform mat4 uNormMat;
 
+    uniform vec3 uCamPos;
 	uniform vec3 uLPos;
 	uniform vec4 uLColor;
 	uniform vec4 uMatAmb;
@@ -86,13 +87,20 @@
  		vec3 vPosW = (uModelMat * vec4(aVertexPosition, 1.0)).xyz;
 		
 		vec3 vNormal = normalize(vec3(uNormMat * vec4(aVNorm, 1.0)));
+        
+        vec4 ambient = vec4(uLColor.rgb * uMatAmb.rgb, uMatAmb.a);
 		
 		vec3 vL = normalize(uLPos - vPosW);
 		float teta = max(dot(vL, vNormal), 0.0);
 				
 		vec4 diffuse = vec4(uLColor.rgb * uMatDif.rgb * teta, uMatDif.a);
-
-		vColor = clamp(diffuse, 0.0, 1.0);
+        
+        vec3 vV = normalize(uCamPos - vPosW);
+		vec3 vR = normalize(reflect(-vL, vNormal));
+		float omega = max(dot(vV, vR), 0.0);
+		vec4 specular = vec4(uLColor.rgb * uMatSpec.rgb * pow(omega,20.0), uMatSpec.a);
+        
+		vColor = clamp(ambient + diffuse + specular, 0.0, 1.0);
  		//
 
 		//vColor = vec4(uColor, 1.0);
@@ -104,7 +112,7 @@
 	precision mediump float;
 		
 	varying vec4 vColor;
-		
+
 	void main(void) {
 		gl_FragColor = vColor;
 	}
