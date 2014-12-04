@@ -138,7 +138,6 @@ function onReadComplete(gl) {
 
 		//groupModel.colorBuffer = null;
 
-		//
 		groupModel.normalBuffer = gl.createBuffer();
 		if (groupModel.normalBuffer) {		
 			gl.bindBuffer(gl.ARRAY_BUFFER, groupModel.normalBuffer);
@@ -147,8 +146,7 @@ function onReadComplete(gl) {
 		else {
 			alert("ERROR: can not create normalBuffer");
 		}
-		//
-
+		
 		groupModel.indexBuffer = gl.createBuffer();
 		if (groupModel.indexBuffer) {		
 			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, groupModel.indexBuffer);
@@ -371,7 +369,6 @@ function drawSphere(o, shaderProgram) {
 		return;
 	}
 
-	//
 	if (o.normalBuffer != null) {
 		gl.bindBuffer(gl.ARRAY_BUFFER, o.normalBuffer);
 		gl.vertexAttribPointer(shaderProgram.vNormalAttr, 3, gl.FLOAT, false, 0, 0);
@@ -381,8 +378,7 @@ function drawSphere(o, shaderProgram) {
 		alert("o.normalBuffer == null");
 		return;
 	}
-	//
-
+	
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, o.indexBuffer);
 
 	gl.drawElements(gl.TRIANGLES, o.numObjects, gl.UNSIGNED_SHORT, 0);
@@ -443,7 +439,6 @@ var matDif		= new Vector4();
 var matSpec		= new Vector4();
     
 var Ns;
-//
 
 	gl.clear(gl.COLOR_BUFFER_BIT || gl.DEPTH_BUFFER_BIT);
 	gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
@@ -521,19 +516,16 @@ var Ns;
             modelMat.multiply(rotMat[0]);
             modelMat.multiply(scaleMat[0]);
 
-            //
             NormMat.setIdentity();
             NormMat.setInverseOf(modelMat);
 			NormMat.transpose();
-			//
-
+			
             MVPMat.setIdentity();
             MVPMat.multiply(ProjMat);
             MVPMat.multiply(ViewMat);
             MVPMat.multiply(modelMat);
 
-            //	
-			gl.uniformMatrix4fv(shaderObject.MMatUniform, false, modelMat.elements);
+            gl.uniformMatrix4fv(shaderObject.MMatUniform, false, modelMat.elements);
 			gl.uniformMatrix4fv(shaderObject.NMatUniform, false, NormMat.elements);
             gl.uniform3fv(shaderObject.uCamPos, cameraPos.elements);
 			gl.uniform4fv(shaderObject.uLightColor, lightColor.elements);
@@ -541,8 +533,7 @@ var Ns;
 			/*gl.uniform4fv(shaderObject.uMatAmb, matAmb.elements);
 			gl.uniform4fv(shaderObject.uMatDif, matDif.elements);
 			gl.uniform4fv(shaderObject.uMatSpec, matSpec.elements);*/
-			//
-            
+			
             gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);    
             
             for(var o = 0; o < model.length; o++) {
@@ -573,23 +564,19 @@ var Ns;
 
             modelMat.rotate(rot, 0.0, 0.0, 1.0);
             modelMat.translate(1.0, 0.0, 0.0);
-
-            //
+            
             NormMat.setIdentity();
             NormMat.setInverseOf(modelMat);
 			NormMat.transpose();
-			//
-
+			
             MVPMat.setIdentity();
             MVPMat.multiply(ProjMat);
             MVPMat.multiply(ViewMat);
             MVPMat.multiply(modelMat);
-
-            //
+           
             gl.uniformMatrix4fv(shaderObject.MMatUniform, false, modelMat.elements);
 			gl.uniformMatrix4fv(shaderObject.NMatUniform, false, NormMat.elements);
-			//
-			
+						
             gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
             gl.uniform3fv(shaderObject.uColor, color);
             
@@ -605,11 +592,7 @@ var Ns;
             modelMat.multiply(scaleMat[1]);
 
             color[0] = 1.0; color[1] = 0.0; color[2] = 1.0;
-            rot += 1.0;
-
-            modelMat.rotate(rot, 0.0, 0.0, 1.0);
-            modelMat.translate(1.0, 0.0, 0.0);
-            
+                        
             MVPMat.setIdentity();
             MVPMat.multiply(ProjMat);
             MVPMat.multiply(ViewMat);
@@ -625,8 +608,7 @@ var Ns;
             }
             
             color[0] = 1.0; color[1] = 0.0; color[2] = 1.0;
-            rot += 1.0;
-
+            
             modelMat.rotate(rot, 0.0, 0.0, 1.0);
             modelMat.translate(1.0, 0.0, 0.0);
 
@@ -734,8 +716,7 @@ function webGLStart() {
 	shaderObject.uColor				= gl.getUniformLocation(shaderObject, "uColor");
 	shaderObject.uMVPMat 			= gl.getUniformLocation(shaderObject, "uMVPMat");
 	
-	//
-    shaderObject.uCamPos 			= gl.getUniformLocation(shaderObject, "uCamPos");
+	shaderObject.uCamPos 			= gl.getUniformLocation(shaderObject, "uCamPos");
 	shaderObject.MMatUniform 		= gl.getUniformLocation(shaderObject, "uModelMat");
 	shaderObject.NMatUniform 		= gl.getUniformLocation(shaderObject, "uNormMat");
 	shaderObject.vNormalAttr 		= gl.getAttribLocation(shaderObject, "aVNorm");
@@ -751,8 +732,7 @@ function webGLStart() {
 		console.log("Error getAttribLocation"); 
 		return;
 	}
-	//
-	
+		
 	if (	shaderObject.vPositionAttr < 0 	|| 
 			shaderObject.uColor < 0 	|| 
 			!shaderObject.uMVPMat	) {
@@ -774,19 +754,14 @@ function webGLStart() {
 			onReadComplete(gl);
 			g_objDoc = null;	
 
-			//
-			//lightPos.elements[0]	= 0.0;
-			//lightPos.elements[1]	= 1.30 * g_drawingInfo.BBox.Max.y;
-			//lightPos.elements[2]	= 1.30 * g_drawingInfo.BBox.Max.z;
-
-            cameraPos.elements[0] 	= 0.0;
+			cameraPos.elements[0] 	= 0.0;
 			cameraPos.elements[1] 	= 10.0;
 			cameraPos.elements[2] 	= 0.0;
             
 			lightPos.elements[0]	= 0.0;
 			lightPos.elements[1]	= 0.0;
 			lightPos.elements[2]	= 0.0;
-			//		
+				
 		}
 		if (model.length > 0) {
 			animate();
@@ -801,8 +776,7 @@ function webGLStart() {
 // ********************************************************
 function animate() {
     requestAnimationFrame(animate);
-    //rot += 1.0;
-	render();		
+    render();		
 }
 
 // ********************************************************
