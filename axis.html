@@ -59,8 +59,7 @@
 
 <script id="Object-vs" type="x-shader/x-vertex">
 	attribute vec3 aVertexPosition;
-	uniform vec3 uColor;
-	
+		
 	uniform mat4 uMVPMat;
 
 	//Iluminacao
@@ -102,7 +101,6 @@
         
 		vColor = clamp(ambient + diffuse + specular, 0.0, 1.0);
  		
-		//vColor = vec4(uColor, 1.0);
 	}
 
 </script>

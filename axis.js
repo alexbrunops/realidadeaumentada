@@ -136,8 +136,6 @@ function onReadComplete(gl) {
 			alert("ERROR: can not create vertexBuffer");
 		}
 
-		//groupModel.colorBuffer = null;
-
 		groupModel.normalBuffer = gl.createBuffer();
 		if (groupModel.normalBuffer) {		
 			gl.bindBuffer(gl.ARRAY_BUFFER, groupModel.normalBuffer);
@@ -453,22 +451,6 @@ var Ns;
 	lightColor.elements[2] = 1.0;
 	lightColor.elements[3] = 1.0;
 
-	/*matAmb.elements[0] = 
-    matAmb.elements[1] = 
-    matAmb.elements[2] = 0.2
-    matAmb.elements[3] = 1.0;
-
-    matDif.elements[0] = 
-    matDif.elements[1] = 
-    matDif.elements[2] = 0.8;
-    matDif.elements[3] = 1.0;
-
-    matSpec.elements[0] = 
-    matSpec.elements[1] = 
-    matSpec.elements[2] = 1.0;
-    matSpec.elements[3] = 1.0;*/
-	//
-
 	modelMat.setIdentity();
 	ViewMat.setIdentity();
 	ProjMat.setIdentity();
@@ -488,22 +470,9 @@ var Ns;
     					0.0, 1.0, 0.0 );
     
 	ProjMat.setPerspective(40.0, gl.viewportWidth / gl.viewportHeight, 0.1, 1000.0);
-	
-	/*
-	modelMat.setIdentity();
-	modelMat.multiply(transMat[0]);
-	modelMat.multiply(rotMat[0]);
-	modelMat.multiply(scaleMat[0]);
-	
-	MVPMat.setIdentity();
-    MVPMat.multiply(ProjMat);
-    MVPMat.multiply(ViewMat);
-    MVPMat.multiply(modelMat); 
-    */
-	
-	//drawAxis(axis, shaderAxis, MVPMat);
 
 	if (markers.length > 0) {
+
 		try {
 	    	gl.useProgram(shaderObject);
 		}
@@ -532,10 +501,7 @@ var Ns;
             gl.uniform3fv(shaderObject.uCamPos, cameraPos.elements);
 			gl.uniform4fv(shaderObject.uLightColor, lightColor.elements);
 			gl.uniform3fv(shaderObject.uLightPos, lightPos.elements);
-			/*gl.uniform4fv(shaderObject.uMatAmb, matAmb.elements);
-			gl.uniform4fv(shaderObject.uMatDif, matDif.elements);
-			gl.uniform4fv(shaderObject.uMatSpec, matSpec.elements);*/
-			
+						
             gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);    
             
             for(var o = 0; o < model.length; o++) {
@@ -561,7 +527,6 @@ var Ns;
                 drawSphere(model[o], shaderObject);
             }
             
-            //color[0] = 1.0; color[1] = 1.0; color[2] = 1.0;
             rot += 1.0;
 
             modelMat.rotate(rot, 0.0, 0.0, 1.0);
@@ -580,21 +545,19 @@ var Ns;
 			gl.uniformMatrix4fv(shaderObject.NMatUniform, false, NormMat.elements);
 						
             gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
-            //gl.uniform3fv(shaderObject.uColor, color);
-            
+                       
             for(var o = 0; o < model.length; o++) {
                 drawSphere(model[o], shaderObject);
             }
         }
 
         if(markers[1] != null) {
+
             modelMat.setIdentity();
             modelMat.multiply(transMat[1]);
             modelMat.multiply(rotMat[1]);
             modelMat.multiply(scaleMat[1]);
 
-            //color[0] = 1.0; color[1] = 1.0; color[2] = 1.0;
-                        
             MVPMat.setIdentity();
             MVPMat.multiply(ProjMat);
             MVPMat.multiply(ViewMat);
@@ -602,14 +565,10 @@ var Ns;
             
             gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
 		
-            //color[0] = 1.0; color[1] = 1.0; color[2] = 1.0;
-            //gl.uniform3fv(shaderObject.uColor, color);
-
             for(var o = 0; o < model.length; o++) {
                 drawSphere(model[o], shaderObject);
             }
             
-            //color[0] = 1.0; color[1] = 1.0; color[2] = 1.0;
             
             modelMat.rotate(rot, 0.0, 0.0, 1.0);
             modelMat.translate(1.0, 0.0, 0.0);
@@ -620,13 +579,11 @@ var Ns;
             MVPMat.multiply(modelMat);
 
             gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
-            //gl.uniform3fv(shaderObject.uColor, color);
-            
+                        
             for(var o = 0; o < model.length; o++) {
                 drawSphere(model[o], shaderObject);
             }
-        }
-	    
+        }	    
 	}
 }
 
