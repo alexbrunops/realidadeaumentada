@@ -77,23 +77,6 @@
  		vPosW = (uModelMat * vec4(aVertexPosition, 1.0)).xyz;
 		
 		vNormal = normalize(vec3(uNormMat * vec4(aVNorm, 1.0)));
-
-		////////////////////////////
-        /*
-        vec4 ambient = vec4(uLColor.rgb * uMatAmb.rgb, uMatAmb.a);
-		
-		vec3 vL = normalize(uLPos - vPosW);
-		float teta = max(dot(vL, vNormal), 0.0);
-				
-		vec4 diffuse = vec4(uLColor.rgb * uMatDif.rgb * teta, uMatDif.a);
-        
-        vec3 vV = normalize(uCamPos - vPosW);
-		vec3 vR = normalize(reflect(-vL, vNormal));
-		float omega = max(dot(vV, vR), 0.0);
-		vec4 specular = vec4(uLColor.rgb * uMatSpec.rgb * pow(omega,20.0), uMatSpec.a);
-        
-		vColor = clamp(ambient + diffuse + specular, 0.0, 1.0);
- 		*/
 	}
 
 </script>
@@ -116,18 +99,23 @@
 	void main(void) {
 
 		vec4 ambient = vec4(uLColor.rgb * uMatAmb.rgb, uMatAmb.a);
+
 	
 		vec3 vL = normalize(uLPos - vPosW);
-		float teta = max(dot(vL, vNormal), 0.0);
-				
+		float teta = max(dot(vL, vNormal), 0.0);				
 		vec4 diffuse = vec4(uLColor.rgb * uMatDif.rgb * teta, uMatDif.a);	
 
 		vec3 vV = normalize(uCamPos - vPosW);
 		vec3 vR = normalize(reflect(-vL, vNormal));
 		float omega = max(dot(vV, vR), 0.0);
 		vec4 specular = vec4(uLColor.rgb * uMatSpec.rgb * pow(omega,20.0), uMatSpec.a);	
+
 		
 		gl_FragColor = clamp(ambient + diffuse + specular, 0.0, 1.0);
+
+		//gl_FragColor = clamp(ambient, 0.0, 1.0);
+		//gl_FragColor = clamp(diffuse, 0.0, 1.0);
+		//gl_FragColor = clamp(specular, 0.0, 1.0);
 
 		//gl_FragColor = vColor;
 	}

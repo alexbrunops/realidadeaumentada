@@ -23,9 +23,6 @@ var scaleMat 	= [new Matrix4(), new Matrix4()];
 var lightPos 	= new Vector3();
 var cameraPos 	= new Vector3();
 
-var cameraLook 	= new Vector3();
-var cameraUp 	= new Vector3();
-
 var rot			= 0.0;
 
 var yaw 		= 0.0,
@@ -527,14 +524,14 @@ var matSpec		= new Vector4();
                 matSpec.elements[3] = model[o].Material.Ks.a;
                 */
 
-                matAmb.elements[0] = 0.3;
-                matAmb.elements[1] = 0.3;
-                matAmb.elements[2] = 0.3;
+                matAmb.elements[0] = 0.5;
+                matAmb.elements[1] = 0.5;
+                matAmb.elements[2] = 0.5;
                 matAmb.elements[3] = 1.0;
 
                 matDif.elements[0] = 0.9;
-                matDif.elements[1] = 0.1;
-                matDif.elements[2] = 0.1;
+                matDif.elements[1] = 0.0;
+                matDif.elements[2] = 0.0;
                 matDif.elements[3] = 1.0;
 
                 matSpec.elements[0] = 1.0;
@@ -549,7 +546,7 @@ var matSpec		= new Vector4();
                 drawSphere(model[o], shaderObject);
             }
             
-            rot += 1.0;
+            rot += 3.0;
 
             modelMat.rotate(rot, 0.0, 0.0, 1.0);
             modelMat.translate(1.0, 0.0, 0.0);
@@ -738,20 +735,20 @@ function webGLStart() {
 	transMat[0].setIdentity();	
 
 	readOBJFile("modelos/sphere.obj", gl, 1, true);
+
+	cameraPos.elements[0] 	= 0.0;
+	cameraPos.elements[1] 	= 0.0;
+	cameraPos.elements[2] 	= 0.0;
+            
+	lightPos.elements[0]	= 0.0;
+	lightPos.elements[1]	= 0.0;
+	lightPos.elements[2]	= 0.0;	
 	
 	var tick = function() {
 		if (g_objDoc != null && g_objDoc.isMTLComplete()) { // OBJ and all MTLs are available
 			
 			onReadComplete(gl);
-			g_objDoc = null;	
-			
-			cameraPos.elements[0] 	= 0.0;
-			cameraPos.elements[1] 	= 0.0;
-			cameraPos.elements[2] 	= 0.0;
-            
-			lightPos.elements[0]	= 1.0;
-			lightPos.elements[1]	= 1.0;
-			lightPos.elements[2]	= 1.0;			
+			g_objDoc = null;			
 			
 		}
 		if (model.length > 0) {
