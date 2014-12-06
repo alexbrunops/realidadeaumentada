@@ -157,7 +157,7 @@ function onReadComplete(gl) {
 		}
 
 		groupModel.numObjects = g_drawingInfo.indices[o].length;
-        groupModel.Material 	= g_drawingInfo.materials[o];
+        groupModel.Material = g_drawingInfo.materials[o];
 		model.push(groupModel);
 	}
 }
@@ -489,6 +489,7 @@ var Ns;
     
 	ProjMat.setPerspective(40.0, gl.viewportWidth / gl.viewportHeight, 0.1, 1000.0);
 	
+	/*
 	modelMat.setIdentity();
 	modelMat.multiply(transMat[0]);
 	modelMat.multiply(rotMat[0]);
@@ -497,7 +498,8 @@ var Ns;
 	MVPMat.setIdentity();
     MVPMat.multiply(ProjMat);
     MVPMat.multiply(ViewMat);
-    MVPMat.multiply(modelMat);
+    MVPMat.multiply(modelMat); 
+    */
 	
 	//drawAxis(axis, shaderAxis, MVPMat);
 
@@ -559,7 +561,7 @@ var Ns;
                 drawSphere(model[o], shaderObject);
             }
             
-            color[0] = 0.0; color[1] = 1.0; color[2] = 1.0;
+            //color[0] = 1.0; color[1] = 1.0; color[2] = 1.0;
             rot += 1.0;
 
             modelMat.rotate(rot, 0.0, 0.0, 1.0);
@@ -578,7 +580,7 @@ var Ns;
 			gl.uniformMatrix4fv(shaderObject.NMatUniform, false, NormMat.elements);
 						
             gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
-            gl.uniform3fv(shaderObject.uColor, color);
+            //gl.uniform3fv(shaderObject.uColor, color);
             
             for(var o = 0; o < model.length; o++) {
                 drawSphere(model[o], shaderObject);
@@ -591,7 +593,7 @@ var Ns;
             modelMat.multiply(rotMat[1]);
             modelMat.multiply(scaleMat[1]);
 
-            color[0] = 1.0; color[1] = 0.0; color[2] = 1.0;
+            //color[0] = 1.0; color[1] = 1.0; color[2] = 1.0;
                         
             MVPMat.setIdentity();
             MVPMat.multiply(ProjMat);
@@ -600,14 +602,14 @@ var Ns;
             
             gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
 		
-            color[0] = 0.0; color[1] = 0.0; color[2] = 1.0;
-            gl.uniform3fv(shaderObject.uColor, color);
+            //color[0] = 1.0; color[1] = 1.0; color[2] = 1.0;
+            //gl.uniform3fv(shaderObject.uColor, color);
 
             for(var o = 0; o < model.length; o++) {
                 drawSphere(model[o], shaderObject);
             }
             
-            color[0] = 1.0; color[1] = 0.0; color[2] = 1.0;
+            //color[0] = 1.0; color[1] = 1.0; color[2] = 1.0;
             
             modelMat.rotate(rot, 0.0, 0.0, 1.0);
             modelMat.translate(1.0, 0.0, 0.0);
@@ -618,7 +620,7 @@ var Ns;
             MVPMat.multiply(modelMat);
 
             gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
-            gl.uniform3fv(shaderObject.uColor, color);
+            //gl.uniform3fv(shaderObject.uColor, color);
             
             for(var o = 0; o < model.length; o++) {
                 drawSphere(model[o], shaderObject);
@@ -759,7 +761,7 @@ function webGLStart() {
 			cameraPos.elements[2] 	= 0.0;
             
 			lightPos.elements[0]	= 0.0;
-			lightPos.elements[1]	= 0.0;
+			lightPos.elements[1]	= 10.0;
 			lightPos.elements[2]	= 0.0;
 				
 		}
@@ -804,28 +806,31 @@ function drawCorners(markers){
 
   videoImageContext.lineWidth = 3;
 
-  for (i = 0; i < markers.length; ++ i){
+  for (i = 0; i < markers.length; ++ i) {
 	corners = markers[i].corners;
 	
-      if(i == 0)
+	if(i === 0) {
         videoImageContext.strokeStyle = "red";
-      else
-        if(i == 1)
-          videoImageContext.strokeStyle = "blue";
+    }
+    else {
+        if(i === 1) {
+        	videoImageContext.strokeStyle = "green";
+        }
+    }
       
 	videoImageContext.beginPath();
 	
-	for (j = 0; j < corners.length; ++ j){
-	  corner = corners[j];
-	  videoImageContext.moveTo(corner.x, corner.y);
-	  corner = corners[(j + 1) % corners.length];
-	  videoImageContext.lineTo(corner.x, corner.y);
+	for (j = 0; j < corners.length; ++ j) {
+		corner = corners[j];
+		videoImageContext.moveTo(corner.x, corner.y);
+		corner = corners[(j + 1) % corners.length];
+		videoImageContext.lineTo(corner.x, corner.y);
 	}
 
 	videoImageContext.stroke();
 	videoImageContext.closePath();
 	
-	videoImageContext.strokeStyle = "green";
+	videoImageContext.strokeStyle = "blue";
 	videoImageContext.strokeRect(corners[0].x - 2, corners[0].y - 2, 4, 4);
   }
 };
@@ -864,8 +869,8 @@ function updateScenes(markers) {
             scaleMat[j].scale(modelSize, modelSize, modelSize);
         }
 		
-		//console.log("pose.bestError = " + pose.bestError);
-		//console.log("pose.alternativeError = " + pose.alternativeError);
+		console.log("pose.bestError = " + pose.bestError);
+		console.log("pose.alternativeError = " + pose.alternativeError);
 	}
 	else {
 		transMat[0].setIdentity();

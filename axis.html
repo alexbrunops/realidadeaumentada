@@ -101,8 +101,7 @@
 		vec4 specular = vec4(uLColor.rgb * uMatSpec.rgb * pow(omega,20.0), uMatSpec.a);
         
 		vColor = clamp(ambient + diffuse + specular, 0.0, 1.0);
- 		//
-
+ 		
 		//vColor = vec4(uColor, 1.0);
 	}
 
