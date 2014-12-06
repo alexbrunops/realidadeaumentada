@@ -23,6 +23,9 @@ var scaleMat 	= [new Matrix4(), new Matrix4()];
 var lightPos 	= new Vector3();
 var cameraPos 	= new Vector3();
 
+var cameraLook 	= new Vector3();
+var cameraUp 	= new Vector3();
+
 var rot			= 0.0;
 
 var yaw 		= 0.0,
@@ -464,12 +467,13 @@ var Ns;
 	drawTextQuad(baseTexture, shaderBaseImage, MVPMat);
 	
 	updateScenes(markers);
-   		
+   	
+   	
     ViewMat.setLookAt(	0.0, 0.0, 0.0,
     					0.0, 0.0, -1.0,
     					0.0, 1.0, 0.0 );
-    
-	ProjMat.setPerspective(40.0, gl.viewportWidth / gl.viewportHeight, 0.1, 1000.0);
+	
+   	ProjMat.setPerspective(40.0, gl.viewportWidth / gl.viewportHeight, 0.1, 1000.0);
 
 	if (markers.length > 0) {
 
@@ -495,13 +499,13 @@ var Ns;
             MVPMat.multiply(ProjMat);
             MVPMat.multiply(ViewMat);
             MVPMat.multiply(modelMat);
-
-            gl.uniformMatrix4fv(shaderObject.MMatUniform, false, modelMat.elements);
-			gl.uniformMatrix4fv(shaderObject.NMatUniform, false, NormMat.elements);
+            
             gl.uniform3fv(shaderObject.uCamPos, cameraPos.elements);
-			gl.uniform4fv(shaderObject.uLightColor, lightColor.elements);
 			gl.uniform3fv(shaderObject.uLightPos, lightPos.elements);
-						
+			gl.uniform4fv(shaderObject.uLightColor, lightColor.elements);
+			
+			gl.uniformMatrix4fv(shaderObject.MMatUniform, false, modelMat.elements);
+			gl.uniformMatrix4fv(shaderObject.NMatUniform, false, NormMat.elements);		
             gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);    
             
             for(var o = 0; o < model.length; o++) {
@@ -529,7 +533,7 @@ var Ns;
 
                 matDif.elements[0] = 0.9;
                 matDif.elements[1] = 0.1;
-                matDif.elements[2] = 0.9;
+                matDif.elements[2] = 0.1;
                 matDif.elements[3] = 1.0;
 
                 matSpec.elements[0] = 0.3;
@@ -549,7 +553,7 @@ var Ns;
             modelMat.rotate(rot, 0.0, 0.0, 1.0);
             modelMat.translate(1.0, 0.0, 0.0);
             
-            NormMat.setIdentity();
+            //NormMat.setIdentity();
             NormMat.setInverseOf(modelMat);
 			NormMat.transpose();
 			
@@ -560,8 +564,7 @@ var Ns;
            
             gl.uniformMatrix4fv(shaderObject.MMatUniform, false, modelMat.elements);
 			gl.uniformMatrix4fv(shaderObject.NMatUniform, false, NormMat.elements);
-						
-            gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
+			gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
                        
             for(var o = 0; o < model.length; o++) {
                 drawSphere(model[o], shaderObject);
@@ -575,27 +578,38 @@ var Ns;
             modelMat.multiply(rotMat[1]);
             modelMat.multiply(scaleMat[1]);
 
-            MVPMat.setIdentity();
-            MVPMat.multiply(ProjMat);
-            MVPMat.multiply(ViewMat);
-            MVPMat.multiply(modelMat);            
-            
-            gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
-		
-            for(var o = 0; o < model.length; o++) {
-                drawSphere(model[o], shaderObject);
-            }
-            
-            
-            modelMat.rotate(rot, 0.0, 0.0, 1.0);
-            modelMat.translate(1.0, 0.0, 0.0);
+            //NormMat.setIdentity();
+            NormMat.setInverseOf(modelMat);
+			NormMat.transpose();
 
             MVPMat.setIdentity();
             MVPMat.multiply(ProjMat);
             MVPMat.multiply(ViewMat);
             MVPMat.multiply(modelMat);
 
+            gl.uniformMatrix4fv(shaderObject.MMatUniform, false, modelMat.elements);
+			gl.uniformMatrix4fv(shaderObject.NMatUniform, false, NormMat.elements);  
             gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
+		
+            for(var o = 0; o < model.length; o++) {
+                drawSphere(model[o], shaderObject);
+            }            
+            
+            modelMat.rotate(rot, 0.0, 0.0, 1.0);
+            modelMat.translate(1.0, 0.0, 0.0);
+
+            //NormMat.setIdentity();
+            NormMat.setInverseOf(modelMat);
+			NormMat.transpose();
+
+            MVPMat.setIdentity();
+            MVPMat.multiply(ProjMat);
+            MVPMat.multiply(ViewMat);
+            MVPMat.multiply(modelMat);
+
+            gl.uniformMatrix4fv(shaderObject.MMatUniform, false, modelMat.elements);
+			gl.uniformMatrix4fv(shaderObject.NMatUniform, false, NormMat.elements);
+			gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
                         
             for(var o = 0; o < model.length; o++) {
                 drawSphere(model[o], shaderObject);
@@ -729,15 +743,16 @@ function webGLStart() {
 			
 			onReadComplete(gl);
 			g_objDoc = null;	
-
+			
 			cameraPos.elements[0] 	= 0.0;
 			cameraPos.elements[1] 	= 10.0;
 			cameraPos.elements[2] 	= 0.0;
             
 			lightPos.elements[0]	= 0.0;
-			lightPos.elements[1]	= 10.0;
+			lightPos.elements[1]	= 0.0;
 			lightPos.elements[2]	= 0.0;
-				
+			
+			
 		}
 		if (model.length > 0) {
 			animate();
@@ -783,15 +798,8 @@ function drawCorners(markers){
   for (i = 0; i < markers.length; ++ i) {
 	corners = markers[i].corners;
 	
-	if(i === 0) {
-        videoImageContext.strokeStyle = "red";
-    }
-    else {
-        if(i === 1) {
-        	videoImageContext.strokeStyle = "green";
-        }
-    }
-      
+	videoImageContext.strokeStyle = "red";
+       
 	videoImageContext.beginPath();
 	
 	for (j = 0; j < corners.length; ++ j) {
@@ -804,7 +812,7 @@ function drawCorners(markers){
 	videoImageContext.stroke();
 	videoImageContext.closePath();
 	
-	videoImageContext.strokeStyle = "blue";
+	videoImageContext.strokeStyle = "green";
 	videoImageContext.strokeRect(corners[0].x - 2, corners[0].y - 2, 4, 4);
   }
 };
