@@ -59,34 +59,27 @@
 
 <script id="Object-vs" type="x-shader/x-vertex">
 	attribute vec3 aVertexPosition;
-		
+	attribute vec3 aVNorm;	
+
 	uniform mat4 uMVPMat;
-
-	//Iluminacao
-	attribute vec3 aVNorm;
-
 	uniform mat4 uModelMat;
 	uniform mat4 uNormMat;
-
-    uniform vec3 uCamPos;
-	uniform vec3 uLPos;
-	uniform vec4 uLColor;
-	uniform vec4 uMatAmb;
-	uniform vec4 uMatDif;
-	uniform vec4 uMatSpec;
-	//	
+	
+	varying vec3 vNormal;
+	varying vec3 vPosW;		
 		
-	varying vec4 vColor;
+	//varying vec4 vColor;
 		
 	void main(void) {
 		
  		gl_Position = uMVPMat * vec4(aVertexPosition.xyz, 1.0);
 
- 		//Iluminacao
- 		vec3 vPosW = (uModelMat * vec4(aVertexPosition, 1.0)).xyz;
+ 		vPosW = (uModelMat * vec4(aVertexPosition, 1.0)).xyz;
 		
-		vec3 vNormal = normalize(vec3(uNormMat * vec4(aVNorm, 1.0)));
-        
+		vNormal = normalize(vec3(uNormMat * vec4(aVNorm, 1.0)));
+
+		////////////////////////////
+        /*
         vec4 ambient = vec4(uLColor.rgb * uMatAmb.rgb, uMatAmb.a);
 		
 		vec3 vL = normalize(uLPos - vPosW);
@@ -100,18 +93,43 @@
 		vec4 specular = vec4(uLColor.rgb * uMatSpec.rgb * pow(omega,20.0), uMatSpec.a);
         
 		vColor = clamp(ambient + diffuse + specular, 0.0, 1.0);
- 		
+ 		*/
 	}
 
 </script>
 
 <script id="Object-fs" type="x-shader/x-fragment">
 	precision mediump float;
+
+	varying vec3 vNormal;
+	varying vec3 vPosW;	
+
+	uniform vec3 uCamPos;
+	uniform vec3 uLPos;
+	uniform vec4 uLColor;
+	uniform vec4 uMatAmb;
+	uniform vec4 uMatDif;
+	uniform vec4 uMatSpec;
 		
-	varying vec4 vColor;
+	//varying vec4 vColor;
 
 	void main(void) {
-		gl_FragColor = vColor;
+
+		vec4 ambient = vec4(uLColor.rgb * uMatAmb.rgb, uMatAmb.a);
+	
+		vec3 vL = normalize(uLPos - vPosW);
+		float teta = max(dot(vL, vNormal), 0.0);
+				
+		vec4 diffuse = vec4(uLColor.rgb * uMatDif.rgb * teta, uMatDif.a);	
+
+		vec3 vV = normalize(uCamPos - vPosW);
+		vec3 vR = normalize(reflect(-vL, vNormal));
+		float omega = max(dot(vV, vR), 0.0);
+		vec4 specular = vec4(uLColor.rgb * uMatSpec.rgb * pow(omega,20.0), uMatSpec.a);	
+		
+		gl_FragColor = clamp(ambient + diffuse + specular, 0.0, 1.0);
+
+		//gl_FragColor = vColor;
 	}
 </script>
 

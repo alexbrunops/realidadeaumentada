@@ -82,6 +82,7 @@ function initGL(canvas) {
 	gl.viewportHeight 	= canvas.height;
 	gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
+	//gl.enable(gl.DEPTH_TEST);
 	
 	return gl;
 }
@@ -430,7 +431,7 @@ var modelMat 	= new Matrix4();
 var ViewMat 	= new Matrix4();
 var ProjMat 	= new Matrix4();
 var MVPMat 		= new Matrix4();
-var color 		= new Float32Array(3);
+//var color 		= new Float32Array(3);
 
 //Iluminacao
 var NormMat 	= new Matrix4();
@@ -439,7 +440,7 @@ var matAmb		= new Vector4();
 var matDif		= new Vector4();
 var matSpec		= new Vector4();
     
-var Ns;
+//var Ns;
 
 	gl.clear(gl.COLOR_BUFFER_BIT || gl.DEPTH_BUFFER_BIT);
 	gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
@@ -475,7 +476,7 @@ var Ns;
 	
    	ProjMat.setPerspective(40.0, gl.viewportWidth / gl.viewportHeight, 0.1, 1000.0);
 
-	if (markers.length > 0) {
+   	if (markers.length > 0) {
 
 		try {
 	    	gl.useProgram(shaderObject);
@@ -536,9 +537,9 @@ var Ns;
                 matDif.elements[2] = 0.1;
                 matDif.elements[3] = 1.0;
 
-                matSpec.elements[0] = 0.3;
-                matSpec.elements[1] = 0.3;
-                matSpec.elements[2] = 0.3;
+                matSpec.elements[0] = 1.0;
+                matSpec.elements[1] = 1.0;
+                matSpec.elements[2] = 1.0;
                 matSpec.elements[3] = 1.0;
                 
                 gl.uniform4fv(shaderObject.uMatAmb, matAmb.elements);
@@ -745,13 +746,12 @@ function webGLStart() {
 			g_objDoc = null;	
 			
 			cameraPos.elements[0] 	= 0.0;
-			cameraPos.elements[1] 	= 10.0;
+			cameraPos.elements[1] 	= 0.0;
 			cameraPos.elements[2] 	= 0.0;
             
-			lightPos.elements[0]	= 0.0;
-			lightPos.elements[1]	= 0.0;
-			lightPos.elements[2]	= 0.0;
-			
+			lightPos.elements[0]	= 1.0;
+			lightPos.elements[1]	= 1.0;
+			lightPos.elements[2]	= 1.0;			
 			
 		}
 		if (model.length > 0) {
