@@ -505,6 +505,7 @@ var Ns;
             gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);    
             
             for(var o = 0; o < model.length; o++) {
+                /*
                 matAmb.elements[0] = model[o].Material.Ka.r;
                 matAmb.elements[1] = model[o].Material.Ka.g;
                 matAmb.elements[2] = model[o].Material.Ka.b;
@@ -519,6 +520,22 @@ var Ns;
                 matSpec.elements[1] = model[o].Material.Ks.g;
                 matSpec.elements[2] = model[o].Material.Ks.b;
                 matSpec.elements[3] = model[o].Material.Ks.a;
+                */
+
+                matAmb.elements[0] = 0.3;
+                matAmb.elements[1] = 0.3;
+                matAmb.elements[2] = 0.3;
+                matAmb.elements[3] = 1.0;
+
+                matDif.elements[0] = 0.9;
+                matDif.elements[1] = 0.1;
+                matDif.elements[2] = 0.9;
+                matDif.elements[3] = 1.0;
+
+                matSpec.elements[0] = 0.3;
+                matSpec.elements[1] = 0.3;
+                matSpec.elements[2] = 0.3;
+                matSpec.elements[3] = 1.0;
                 
                 gl.uniform4fv(shaderObject.uMatAmb, matAmb.elements);
                 gl.uniform4fv(shaderObject.uMatDif, matDif.elements);
