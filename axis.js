@@ -20,8 +20,13 @@ var rotMat 		= [new Matrix4(), new Matrix4()];
 var transMat 	= [new Matrix4(), new Matrix4()];
 var scaleMat 	= [new Matrix4(), new Matrix4()];
 
-var lightPos 	= new Vector3();
+var lightPos 	= [new Vector3(), new Vector3()];
 var cameraPos 	= new Vector3();
+<<<<<<< Updated upstream
+=======
+var cameraLook 	= new Vector3();
+var cameraUp 	= new Vector3();
+>>>>>>> Stashed changes
 
 var rot			= 0.0;
 
@@ -33,6 +38,10 @@ navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia 
 window.URL = window.URL || window.webkitURL;
 
 var model			= new Array;
+
+var scene           = false;
+
+var delta			= 1.0;
 
 var g_objDoc 		= null;	// The information of OBJ file
 var g_drawingInfo 	= null;	// The information for drawing 3D model
@@ -467,9 +476,16 @@ var matSpec		= new Vector4();
 	updateScenes(markers);
    	
    	
-    ViewMat.setLookAt(	0.0, 0.0, 0.0,
-    					0.0, 0.0, -1.0,
-    					0.0, 1.0, 0.0 );
+    ViewMat.setLookAt(	cameraPos.elements[0], 
+    					cameraPos.elements[1], 
+    					cameraPos.elements[2], 
+    					cameraLook.elements[0], 
+    					cameraLook.elements[1], 
+    					cameraLook.elements[2], 
+    					cameraUp.elements[0], 
+    					cameraUp.elements[1], 
+    					cameraUp.elements[2] 
+                     );
 	
    	ProjMat.setPerspective(40.0, gl.viewportWidth / gl.viewportHeight, 0.1, 1000.0);
 
@@ -498,8 +514,13 @@ var matSpec		= new Vector4();
             MVPMat.multiply(ViewMat);
             MVPMat.multiply(modelMat);
             
+            lightPos[0].elements[0] = modelMat.elements[0];
+            lightPos[0].elements[1] = modelMat.elements[1];
+            lightPos[0].elements[2] = modelMat.elements[2];
+            
             gl.uniform3fv(shaderObject.uCamPos, cameraPos.elements);
-			gl.uniform3fv(shaderObject.uLightPos, lightPos.elements);
+			gl.uniform3fv(shaderObject.uLightPos, lightPos[0].elements);
+			gl.uniform3fv(shaderObject.uLightPos2, lightPos[1].elements);
 			gl.uniform4fv(shaderObject.uLightColor, lightColor.elements);
 			
 			gl.uniformMatrix4fv(shaderObject.MMatUniform, false, modelMat.elements);
@@ -507,6 +528,7 @@ var matSpec		= new Vector4();
             gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);    
             
             for(var o = 0; o < model.length; o++) {
+<<<<<<< Updated upstream
                 /*
                 matAmb.elements[0] = model[o].Material.Ka.r;
                 matAmb.elements[1] = model[o].Material.Ka.g;
@@ -523,6 +545,8 @@ var matSpec		= new Vector4();
                 matSpec.elements[2] = model[o].Material.Ks.b;
                 matSpec.elements[3] = model[o].Material.Ks.a;
                 */
+=======
+>>>>>>> Stashed changes
 
                 matAmb.elements[0] = 0.5;
                 matAmb.elements[1] = 0.5;
@@ -530,7 +554,11 @@ var matSpec		= new Vector4();
                 matAmb.elements[3] = 1.0;
 
                 matDif.elements[0] = 0.9;
+<<<<<<< Updated upstream
                 matDif.elements[1] = 0.0;
+=======
+                matDif.elements[1] = 0.9;
+>>>>>>> Stashed changes
                 matDif.elements[2] = 0.0;
                 matDif.elements[3] = 1.0;
 
@@ -565,11 +593,33 @@ var matSpec		= new Vector4();
 			gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
                        
             for(var o = 0; o < model.length; o++) {
+                
+                matAmb.elements[0] = 0.0;
+                matAmb.elements[1] = 0.0;
+                matAmb.elements[2] = 0.0;
+                matAmb.elements[3] = 1.0;
+
+                matDif.elements[0] = 0.0;
+                matDif.elements[1] = 0.0;
+                matDif.elements[2] = 0.9;
+                matDif.elements[3] = 1.0;
+
+                matSpec.elements[0] = 0.5;
+                matSpec.elements[1] = 0.5;
+                matSpec.elements[2] = 0.5;
+                matSpec.elements[3] = 1.0;
+                
+                gl.uniform4fv(shaderObject.uMatAmb, matAmb.elements);
+                gl.uniform4fv(shaderObject.uMatDif, matDif.elements);
+                gl.uniform4fv(shaderObject.uMatSpec, matSpec.elements);
+                
                 drawSphere(model[o], shaderObject);
             }
         }
 
         if(markers[1] != null) {
+            
+            if(!scene) {
 
             modelMat.setIdentity();
             modelMat.multiply(transMat[1]);
@@ -590,8 +640,28 @@ var matSpec		= new Vector4();
             gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
 		
             for(var o = 0; o < model.length; o++) {
+                
+                matAmb.elements[0] = 0.0;
+                matAmb.elements[1] = 0.0;
+                matAmb.elements[2] = 0.0;
+                matAmb.elements[3] = 1.0;
+
+                matDif.elements[0] = 0.0;
+                matDif.elements[1] = 0.0;
+                matDif.elements[2] = 0.9;
+                matDif.elements[3] = 1.0;
+
+                matSpec.elements[0] = 0.5;
+                matSpec.elements[1] = 0.5;
+                matSpec.elements[2] = 0.5;
+                matSpec.elements[3] = 1.0;
+                
+                gl.uniform4fv(shaderObject.uMatAmb, matAmb.elements);
+                gl.uniform4fv(shaderObject.uMatDif, matDif.elements);
+                gl.uniform4fv(shaderObject.uMatSpec, matSpec.elements);
+                
                 drawSphere(model[o], shaderObject);
-            }            
+            }           
             
             modelMat.rotate(rot, 0.0, 0.0, 1.0);
             modelMat.translate(1.0, 0.0, 0.0);
@@ -610,7 +680,69 @@ var matSpec		= new Vector4();
 			gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
                         
             for(var o = 0; o < model.length; o++) {
+                
+                matAmb.elements[0] = 0.0;
+                matAmb.elements[1] = 0.0;
+                matAmb.elements[2] = 0.0;
+                matAmb.elements[3] = 1.0;
+
+                matDif.elements[0] = 0.5;
+                matDif.elements[1] = 0.5;
+                matDif.elements[2] = 0.5;
+                matDif.elements[3] = 1.0;
+
+                matSpec.elements[0] = 0.0;
+                matSpec.elements[1] = 0.0;
+                matSpec.elements[2] = 0.0;
+                matSpec.elements[3] = 1.0;
+                
+                gl.uniform4fv(shaderObject.uMatAmb, matAmb.elements);
+                gl.uniform4fv(shaderObject.uMatDif, matDif.elements);
+                gl.uniform4fv(shaderObject.uMatSpec, matSpec.elements);
+                
                 drawSphere(model[o], shaderObject);
+            }
+            } else {
+                modelMat.rotate(rot, 0.0, 0.0, 1.0);
+                modelMat.translate(0.5, 0.0, 0.0);
+                modelMat.scale(0.6, 0.6, 0.6);
+
+                //NormMat.setIdentity();
+                NormMat.setInverseOf(modelMat);
+                NormMat.transpose();
+
+                MVPMat.setIdentity();
+                MVPMat.multiply(ProjMat);
+                MVPMat.multiply(ViewMat);
+                MVPMat.multiply(modelMat);
+
+                gl.uniformMatrix4fv(shaderObject.MMatUniform, false, modelMat.elements);
+                gl.uniformMatrix4fv(shaderObject.NMatUniform, false, NormMat.elements);
+                gl.uniformMatrix4fv(shaderObject.uMVPMat, false, MVPMat.elements);
+
+                for(var o = 0; o < model.length; o++) {
+
+                    matAmb.elements[0] = 0.0;
+                    matAmb.elements[1] = 0.0;
+                    matAmb.elements[2] = 0.0;
+                    matAmb.elements[3] = 1.0;
+
+                    matDif.elements[0] = 0.5;
+                    matDif.elements[1] = 0.5;
+                    matDif.elements[2] = 0.5;
+                    matDif.elements[3] = 1.0;
+
+                    matSpec.elements[0] = 0.0;
+                    matSpec.elements[1] = 0.0;
+                    matSpec.elements[2] = 0.0;
+                    matSpec.elements[3] = 1.0;
+
+                    gl.uniform4fv(shaderObject.uMatAmb, matAmb.elements);
+                    gl.uniform4fv(shaderObject.uMatDif, matDif.elements);
+                    gl.uniform4fv(shaderObject.uMatSpec, matSpec.elements);
+
+                    drawSphere(model[o], shaderObject);
+                }
             }
         }	    
 	}
@@ -629,7 +761,65 @@ function initTexture() {
 
 // ********************************************************
 // ********************************************************
+function render() {	
+	
+	if ( video.readyState === video.HAVE_ENOUGH_DATA ) {
+		videoImageContext.drawImage( video, 0, 0, videoImage.width, videoImage.height );
+		videoTexture.needsUpdate = true;
+		imageData = videoImageContext.getImageData(0, 0, videoImage.width, videoImage.height);
+		
+        var markers = detector.detect(imageData);
+ 		
+ 		//Desenha o contorno vermelho e o ponto verde
+        drawCorners(markers);
+	
+        drawScene(markers);
+	}
+}
+
+// ********************************************************
+// ********************************************************
+function handleKeyUp(event) {
+	
+	var keyunicode = event.charCode || event.keyCode;
+	if (keyunicode == 16)
+		Upper = false;
+}	
+
+// ********************************************************
+// ********************************************************
+function handleKeyDown(event) {
+	
+	var keyunicode = event.charCode || event.keyCode;
+	
+	if (keyunicode == 16) 
+		Upper = true;
+	
+	switch (keyunicode) {						
+		case 38	:	// Up cursor key
+					cameraPos.elements[0] += delta; 
+					cameraPos.elements[1] += delta;
+					cameraPos.elements[2] += delta;
+					break;
+						
+		case 40	:	// Down cursor key
+					cameraPos.elements[0] -= delta; 
+					cameraPos.elements[1] -= delta;
+					cameraPos.elements[2] -= delta;
+					break;						
+		case 65	:	// A
+					scene = !scene;
+					break;						
+		}
+	render();					
+}
+
+// ********************************************************
+// ********************************************************
 function webGLStart() {
+    
+    document.onkeydown 		= handleKeyDown;
+	document.onkeyup 		= handleKeyUp;
 
 	if (!navigator.getUserMedia) {
 		document.getElementById("output").innerHTML = 
@@ -709,12 +899,14 @@ function webGLStart() {
 	shaderObject.NMatUniform 		= gl.getUniformLocation(shaderObject, "uNormMat");
 	shaderObject.vNormalAttr 		= gl.getAttribLocation(shaderObject, "aVNorm");
 	shaderObject.uLightPos 			= gl.getUniformLocation(shaderObject, "uLPos");
+	shaderObject.uLightPos2			= gl.getUniformLocation(shaderObject, "uLPos2");
 	shaderObject.uLightColor 		= gl.getUniformLocation(shaderObject, "uLColor");
 	shaderObject.uMatAmb 			= gl.getUniformLocation(shaderObject, "uMatAmb");
 	shaderObject.uMatDif 			= gl.getUniformLocation(shaderObject, "uMatDif");
 	shaderObject.uMatSpec			= gl.getUniformLocation(shaderObject, "uMatSpec");
 
 	if (shaderObject.aVNorm < 0	 			|| shaderObject.uLightPos < 0 	|| 
+        shaderObject.uLightPos2 < 0 	|| 
 		shaderObject.uLightColor < 0		|| shaderObject.uMatAmb < 0 		|| 
 		shaderObject.uMatDif < 0			|| shaderObject.uMatSpec < 0 ) {
 		console.log("Error getAttribLocation"); 
@@ -739,10 +931,27 @@ function webGLStart() {
 	cameraPos.elements[0] 	= 0.0;
 	cameraPos.elements[1] 	= 0.0;
 	cameraPos.elements[2] 	= 0.0;
+<<<<<<< Updated upstream
             
 	lightPos.elements[0]	= 0.0;
 	lightPos.elements[1]	= 0.0;
 	lightPos.elements[2]	= 0.0;	
+=======
+    cameraLook.elements[0]  = 0.0;
+    cameraLook.elements[1]  = 0.0;
+    cameraLook.elements[2]  = -1.0;
+    cameraUp.elements[0]    = 0.0;
+    cameraUp.elements[1]    = 1.0;
+    cameraUp.elements[2]    = 0.0;
+            
+	lightPos[0].elements[0]	= 0.0;
+	lightPos[0].elements[1]	= 0.0;
+	lightPos[0].elements[2]	= 0.0;	
+	
+    lightPos[1].elements[0]	= 0.0;
+	lightPos[1].elements[1]	= 0.0;
+	lightPos[1].elements[2]	= 0.0;	
+>>>>>>> Stashed changes
 	
 	var tick = function() {
 		if (g_objDoc != null && g_objDoc.isMTLComplete()) { // OBJ and all MTLs are available
@@ -765,24 +974,6 @@ function webGLStart() {
 function animate() {
     requestAnimationFrame(animate);
     render();		
-}
-
-// ********************************************************
-// ********************************************************
-function render() {	
-	
-	if ( video.readyState === video.HAVE_ENOUGH_DATA ) {
-		videoImageContext.drawImage( video, 0, 0, videoImage.width, videoImage.height );
-		videoTexture.needsUpdate = true;
-		imageData = videoImageContext.getImageData(0, 0, videoImage.width, videoImage.height);
-		
-        var markers = detector.detect(imageData);
- 		
- 		//Desenha o contorno vermelho e o ponto verde
-        drawCorners(markers);
-	
-        drawScene(markers);
-	}
 }
 
 // ********************************************************

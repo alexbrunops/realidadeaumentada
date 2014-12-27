@@ -66,9 +66,7 @@
 	uniform mat4 uNormMat;
 	
 	varying vec3 vNormal;
-	varying vec3 vPosW;		
-		
-	//varying vec4 vColor;
+	varying vec3 vPosW;
 		
 	void main(void) {
 		
@@ -89,25 +87,41 @@
 
 	uniform vec3 uCamPos;
 	uniform vec3 uLPos;
+	uniform vec3 uLPos2;
 	uniform vec4 uLColor;
 	uniform vec4 uMatAmb;
 	uniform vec4 uMatDif;
 	uniform vec4 uMatSpec;
-		
-	//varying vec4 vColor;
 
 	void main(void) {
 
 		vec4 ambient = vec4(uLColor.rgb * uMatAmb.rgb, uMatAmb.a);
 
+<<<<<<< Updated upstream
 	
 		vec3 vL = normalize(uLPos - vPosW);
 		float teta = max(dot(vL, vNormal), 0.0);				
 		vec4 diffuse = vec4(uLColor.rgb * uMatDif.rgb * teta, uMatDif.a);	
+=======
+	    // diffuse 1
+		vec3 vL = normalize(uLPos - vPosW);
+		float teta = max(dot(vL, vNormal), 0.0);				
+		vec4 diffuse = vec4(uLColor.rgb * uMatDif.rgb * teta, uMatDif.a);
+        
+        // diffuse 2
+        vec3 vL2 = normalize(uLPos - vPosW);
+		float teta2 = max(dot(vL2, vNormal), 0.0);				
+		vec4 diffuse2 = vec4(uLColor.rgb * uMatDif.rgb * teta2, uMatDif.a);
+        
+        vec4 diffuseTotal = diffuse + diffuse2;
+>>>>>>> Stashed changes
 
 		vec3 vV = normalize(uCamPos - vPosW);
-		vec3 vR = normalize(reflect(-vL, vNormal));
+		
+        // specular 1
+        vec3 vR = normalize(reflect(-vL, vNormal));
 		float omega = max(dot(vV, vR), 0.0);
+<<<<<<< Updated upstream
 		vec4 specular = vec4(uLColor.rgb * uMatSpec.rgb * pow(omega,20.0), uMatSpec.a);	
 
 		
@@ -118,6 +132,18 @@
 		//gl_FragColor = clamp(specular, 0.0, 1.0);
 
 		//gl_FragColor = vColor;
+=======
+		vec4 specular = vec4(uLColor.rgb * uMatSpec.rgb * pow(omega,20.0), uMatSpec.a);
+        
+        // specular 2
+        vec3 vR2 = normalize(reflect(-vL2, vNormal));
+		float omega2 = max(dot(vV, vR2), 0.0);
+		vec4 specular2 = vec4(uLColor.rgb * uMatSpec.rgb * pow(omega2,20.0), uMatSpec.a);	
+        
+        vec4 specularTotal = specular + specular2;
+		
+		gl_FragColor = clamp(ambient + diffuseTotal + specularTotal, 0.0, 1.0);
+>>>>>>> Stashed changes
 	}
 </script>
 
